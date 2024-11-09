@@ -240,7 +240,7 @@ public abstract class Robot extends LinearOpMode {
         RFA = hardwareMap.get(Servo.class, "Right_Front_Arm");            AG  = hardwareMap.get(Servo.class, "Adjust_Gripper");
         LAG = hardwareMap.get(Servo.class, "Left_Adjust_Gripper");        RAG = hardwareMap.get(Servo.class, "Right_Adjust_Gripper");
         LLG = hardwareMap.get(Servo.class, "Left_Lift_Gripper");          RLG = hardwareMap.get(Servo.class, "Right_Lift_Gripper");
-        D   = hardwareMap.get(Servo.class, "Drop");
+        D   = hardwareMap.get(Servo.class, "Drp");
         Last_yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         encoder1 = FL;
         encoder2 = FR;
