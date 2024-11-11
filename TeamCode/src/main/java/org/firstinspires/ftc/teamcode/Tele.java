@@ -54,10 +54,12 @@ public class Tele extends Robot {
         // Rotate
         double r = r_disable ? 0 : controller.Calculate(WrapRads(yaw - setpoint));
         double x = gamepad1.right_stick_x;
+
         if (x != 0 || CurrentTime - lastRXtime < 0.45) {
             r = x;
             setpoint = yaw;
         }
+
         if (lx == 0 && ly == 0 && x== 0 && Math.abs(r) < 0.2)  r = 0;
         lastRXtime = x != 0 ? CurrentTime : lastRXtime;
         // Denominator for division to get no more than 1
@@ -94,10 +96,12 @@ public class Tele extends Robot {
         if (gamepad2.y) {
             Auto_Lift = true;
             LiftPos = High_Basket;
+            SetServoPos(0, LLG, RLG);
         }
         if (gamepad2.b) {
             Auto_Lift = true;
             LiftPos = 0;
+            SetServoPos(0, LLG, RLG);
         }
         if (gamepad2.a) {
             while (true) {
@@ -251,15 +255,15 @@ public class Tele extends Robot {
                 AdjustGripper();
                 PlaceElement();
                 drop();
-//                telemetry.addData("XYH", "%6f cm %6f cm", Posx, Posy);
-//                telemetry.addData("Lift", "%d", CurrentPosition);
+                telemetry.addData("XYH", "%6f cm %6f cm", Posx, Posy);
+                telemetry.addData("Lift", "%d", CurrentPosition);
                 telemetry.addData("LeftLift", "%d", LL.getCurrentPosition());
                 telemetry.addData("RightLift", "%d", RL.getCurrentPosition());
 //                telemetry.addData("LRM", "%6d  %6d %6d", left_encoder_pos, right_encoder_pos, center_encoder_pos);
 //                telemetry.addData("heading", toDegree(heading));
 //                telemetry.addData("XYH", "%6f cm %6f cm", Posx, Posy);
                 telemetry.update();
-                if(gamepad1.start){
+                if(gamepad1.options){
                     imu.resetYaw();
                     setpoint = 0;
                 }
