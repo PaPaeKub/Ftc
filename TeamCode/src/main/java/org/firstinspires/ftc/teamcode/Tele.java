@@ -92,11 +92,11 @@ public class Tele extends Robot {
         if (gamepad2.x) {
             Auto_Lift = true;
             LiftPos = High_Chamber;
+            SetServoPos(0, LLG, RLG);
         }
         if (gamepad2.y) {
             Auto_Lift = true;
             LiftPos = High_Basket;
-            SetServoPos(0, LLG, RLG);
         }
         if (gamepad2.b) {
             Auto_Lift = true;
