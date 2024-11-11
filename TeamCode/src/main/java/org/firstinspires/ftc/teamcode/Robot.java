@@ -33,7 +33,7 @@ public abstract class Robot extends LinearOpMode {
     public final int      Gear_20_HD_HEX      = Counts_per_HD_HEX * 20;
     /** (3 * 4 * 5):1 UltraPlanetary HD HEX Motor Encoder per revolution */
     public final double   Gear_60_HD_HEX      = Counts_per_HD_HEX * 54.8;
-    public final double   Wheel_Diameter_Inch = 10.31 / 2.54;
+    public final double   Wheel_Diameter_Inch = 10.16 / 2.54;
     public final double   Counts_per_Inch     = Gear_20_HD_HEX / (Wheel_Diameter_Inch * Math.PI);
     public double[]       currentXY           = {0, 0};
     public final double   L                   = 37.4; //distance between 1 and 2 in cm
@@ -51,7 +51,7 @@ public abstract class Robot extends LinearOpMode {
     private double Last_yaw;
 
     public final int Low_Chamber  = 1000;
-    public final int Low_basket_High_Chamber = 4000;
+    public final int Low_basket_High_Chamber = 2800;
     public final int High_Basket  = 6000;
 
 
@@ -82,7 +82,6 @@ public abstract class Robot extends LinearOpMode {
 //        heading += phi;
 
 //        heading = WrapRads(heading);
-
         prev_left_encoder_pos = left_encoder_pos;
         prev_right_encoder_pos = right_encoder_pos;
         prev_center_encoder_pos = center_encoder_pos;
@@ -114,7 +113,7 @@ public abstract class Robot extends LinearOpMode {
 //        OldYaw = CurrentYaw;
     }
 
-    public void move(double tilex, double tiley, double setpoint, double[] basespeed, double[] Kpidf_R,
+    public void move(double power, double tilex, double tiley, double setpoint, double[] basespeed, double[] Kpidf_R,
                      double[] Kpidf_X, double[] Kpidf_Y, double Brake_Time, double height) {
         Controller  pidR    = new Controller(Kpidf_R[0], Kpidf_R[1], Kpidf_R[2], Kpidf_R[3], basespeed[0], toRadian(0.75));
         Controller  DelthaX = new Controller(Kpidf_X[0], Kpidf_X[1], Kpidf_X[2], Kpidf_X[3], basespeed[1], 1);
@@ -136,13 +135,15 @@ public abstract class Robot extends LinearOpMode {
 
             double r = pidR.Calculate(WrapRads(toRadian(setpoint) - heading));
             double d = Math.max(Math.abs(Vx) + Math.abs(Vy) + Math.abs(r), 1);
-            double Move_Factor = Range.clip(this.Current_Time - this.Last_Time, 0, 1);
-            MovePower((y2 + x2 - r) / d * Move_Factor, (y2 - x2 + r) / d * Move_Factor,
-                      (y2 - x2 - r) / d * Move_Factor, (y2 + x2 + r) / d * Move_Factor);
+//            double Move_Factor = Range.clip(this.Current_Time - this.Last_Time, 0, 1);
+            MovePower((power + y2 + x2 - r) / d, (power + y2 - x2 + r) / d,
+                      (power + y2 - x2 - r) / d, (power + y2 + x2 + r) / d);
 
             double curPos = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
-            double Lift_Power = (curPos < (height + 20) && curPos > (height - 20)) ? 0 :curPos > height ? -0.2 : 1;
+            double Pos = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition()) > 5500 ? 1 : 0;
+            double Lift_Power = (curPos < (height + 20) && curPos > (height - 20)) ? 0 : curPos > height ? -0.2 : 1;
             LiftPower(Lift_Power);
+            SetServoPos(Pos, LLG, RLG);
 
 //            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 //            telemetry.addData("Move_Factor", Move_Factor);
@@ -157,9 +158,9 @@ public abstract class Robot extends LinearOpMode {
 //            telemetry.addData("Complete", IS_Complete);
 //            telemetry.update();
 
-            if (Math.abs(Vx) <= 1.0 && Math.abs(Vy) <= 1.0 && Math.abs(r) <= 1.0) {
+            if (Math.abs(Vx) <= 1.0 && Math.abs(Vy) <= 1.0 && Math.abs(r) <= 1.0 && Lift_Power == 0) {
                 IS_Complete += 1;
-                if (IS_Complete > 20) break;
+                if (IS_Complete > 10) break;
                 continue;
             }
             IS_Complete = 0;
@@ -240,7 +241,7 @@ public abstract class Robot extends LinearOpMode {
         RFA = hardwareMap.get(Servo.class, "Right_Front_Arm");            AG  = hardwareMap.get(Servo.class, "Adjust_Gripper");
         LAG = hardwareMap.get(Servo.class, "Left_Adjust_Gripper");        RAG = hardwareMap.get(Servo.class, "Right_Adjust_Gripper");
         LLG = hardwareMap.get(Servo.class, "Left_Lift_Gripper");          RLG = hardwareMap.get(Servo.class, "Right_Lift_Gripper");
-        D   = hardwareMap.get(Servo.class, "Drp");
+        D   = hardwareMap.get(Servo.class, "Drop");
         Last_yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         encoder1 = FL;
         encoder2 = FR;
@@ -264,6 +265,8 @@ public abstract class Robot extends LinearOpMode {
         SetServoPos(0, LA, RA);
         SetServoPos(0, LFA, RFA);
         SetServoPos(0, LAG, RAG);
+        SetServoPos(0, LLG, RLG);
+        SetServoPos(0, D);
 
         // setMode Motors
 
