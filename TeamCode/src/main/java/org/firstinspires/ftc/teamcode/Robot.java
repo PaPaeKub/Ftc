@@ -51,7 +51,7 @@ public abstract class Robot extends LinearOpMode {
     private double Last_yaw;
 
     public final int Low_Chamber  = 1000;
-    public final int Low_basket_High_Chamber = 2800;
+    public final int High_Chamber = 2700;
     public final int High_Basket  = 6000;
 
 

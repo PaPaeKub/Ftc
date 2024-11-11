@@ -19,22 +19,22 @@ public class Tele extends Robot {
 
     // Variables
     int Level, CurrentPosition = 0;
-    double setpoint = 0, H_Ang = 0, AL_Ang = 0, AD_Ang = 0, ArmPos = 0, GripPos = 0;
+    double setpoint = 0, AL_Ang = 0, ArmPos = 0, LiftPos = 0, arm = 0;
     boolean ls = false, On = false, ag = false, press_ag = false, press = false, Lift_isAuto = false, LB_Press = false, RB_Press = false,
-            r_disable = false, Left_isTouch = false, Right_isTouch = false, push = false, press_sq = false, pe = false;
+            r_disable = false, Left_isTouch = false, Right_isTouch = false, push = false, press_sq = false, pe = false, Auto_Lift = false,
+            Auto_Arm = false;
     double CurrentTime = System.nanoTime() * 1E-9,  lastRXtime = CurrentTime;
     private void Init() {
         // Initialize Robot
         Initialize(DcMotor.RunMode.RUN_WITHOUT_ENCODER, new double[]{0, 0, AL_Ang},
                                                         new double[]{0, 0, 0, 0});
-
-        controller = new Controller(1.2, 0.005, 0.1, 0 , 0.15, toRadian(0.75));
         SetServoPos(0, G, AG);
         SetServoPos(0, LA, RA);
         SetServoPos(0, LFA, RFA);
         SetServoPos(0, LAG, RAG);
         SetServoPos(0, LLG, RLG);
         SetServoPos(0.25, D);
+        controller = new Controller(1.2, 0.005, 0.1, 0 , 0.15, toRadian(0.75));
 
         setpoint = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
@@ -63,7 +63,7 @@ public class Tele extends Robot {
         // Denominator for division to get no more than 1
         double d = Math.max(Math.abs(x2) + Math.abs(y2) + Math.abs(r), 1);
         // Lift limit speed
-        double l = lift > 4000 ? 0.4 : lift > 2000 ? 0.7 : ls ? 0.6 : 1;
+        double l = lift > 5000 ? 0.5 : lift > 2500 ? 0.8 : ls ? 0.6 : 1;
 
         MovePower((y2 + x2 + r) / d * l, (y2 - x2 - r) / d * l,
                   (y2 - x2 + r) / d * l, (y2 + x2 - r) / d * l);
@@ -75,43 +75,56 @@ public class Tele extends Robot {
     private void Lift() {
         double LT = gamepad2.left_trigger;
         double RT = gamepad2.right_trigger;
-        double LPos = LL.getCurrentPosition();
-        double RPos = RL.getCurrentPosition();
+        double CurPos = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
+        boolean du = gamepad2.dpad_up;
+        boolean dd = gamepad2.dpad_down;
         Left_isTouch  = LTS.isPressed();
         Right_isTouch = RTS.isPressed();
+
+        if (du) SetServoPos(1, LLG, RLG);
+        if (dd) SetServoPos(0, LLG, RLG);
 
         if (Left_isTouch)  LL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         if (Right_isTouch) RL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        if (Left_isTouch || Right_isTouch && LT > 0) {
+        if (gamepad2.x) {
+            Auto_Lift = true;
+            LiftPos = High_Chamber;
+        }
+        if (gamepad2.y) {
+            Auto_Lift = true;
+            LiftPos = High_Basket;
+        }
+        if (gamepad2.b) {
+            Auto_Lift = true;
+            LiftPos = 0;
+        }
+        if (gamepad2.a) {
+            while (true) {
+                Lift_SetPower(-0.05, -0.05);
+            }
+        }
+
+        if (LT > 0 || Auto_Lift) {
             LL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             RL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
-        double Pos = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition()) > 1500 ? 1 : 0;
+//        double Pos = Auto_Arm && LT < 0.5 ? arm : (Math.max(LL.getCurrentPosition(), RL.getCurrentPosition()) > LiftPos - 500 ? 1 : 0);
         double sp = LT > 0.25 ? LT : RT > 0.25 ? -RT : 0;
-        double spL = Left_isTouch  && RT > 0.25 ? 0 : LPos > 6000 && LT > 0.25 ? 0 : sp;
-        double spR = Right_isTouch && RT > 0.25 ? 0 : RPos > 6000 && LT > 0.25 ? 0 : sp;
+
+        double spL = Auto_Lift ? ((CurPos < (LiftPos + 50) && CurPos > (LiftPos - 50)) ? 0 : CurPos > LiftPos ? -0.8 : 1) :
+                     (Left_isTouch  && RT > 0.25 ? 0 : CurPos > 6000 && LT > 0.25 ? 0 : sp);
+
+        double spR = Auto_Lift ? ((CurPos < (LiftPos + 50) && CurPos > (LiftPos - 50)) ? 0 : CurPos > LiftPos ? -0.8 : 1) :
+                     (Right_isTouch  && RT > 0.25 ? 0 : CurPos > 6000 && LT > 0.25 ? 0 : sp);
+
+//        SetServoPos(Pos, LLG, RLG);
         Lift_SetPower(spL, spR);
-        SetServoPos(Pos, LLG, RLG);
+        if (CurPos < (LiftPos + 20) && CurPos > (LiftPos - 20)) Auto_Lift = false;
     }
 
     private void FrontArm() {
-//        LB_Press = gamepad2.left_bumper;
-//        RB_Press = gamepad2.right_bumper;
-//
-//        if (LB_Press) {
-//            ArmPos = ArmPos - 0.01;
-//        }
-//
-//        if (RB_Press) {
-//            ArmPos = ArmPos + 0.01;
-//        }
-//
-//        ArmPos = Range.clip(ArmPos, 0, 1);
-//        SetServoPos(ArmPos, D);
-//        telemetry.addData("Arm", ArmPos);
-
         boolean tp = gamepad1.cross;
         boolean lb = gamepad1.left_bumper;
         boolean rb = gamepad1.right_bumper;
@@ -124,18 +137,18 @@ public class Tele extends Robot {
             SetServoPos(ArmPos, LA, RA);
         }
         if (rt > 0.5) {
-            ArmPos = 0.5;
+            SetServoPos(0, LLG, RLG);
             SetServoPos(0.5, LA, RA);
             SetServoPos(0.2, G);
             SetServoPos(0.3, D);
             SetServoPos(0.15, LAG, RAG);
-            SetServoPos(0.68, LFA, RFA);
+            SetServoPos(0.61, LFA, RFA);
             On = true;
             ls = true;
         }
 
-        if (lb && On) SetServoPos(0.58, LFA, RFA);
-        if (rb && On) SetServoPos(0.68, LFA, RFA);
+        if (lb && On) SetServoPos(0.61, LFA, RFA);
+        if (rb && On) SetServoPos(0.69, LFA, RFA);
 
         if (!(tp)) {
             press = false;
@@ -220,6 +233,14 @@ public class Tele extends Robot {
     @Override
     public void runOpMode() {
         Init();
+
+        while (!(LTS.isPressed()) && !(RTS.isPressed())) {
+            double spl = LTS.isPressed() ? 0 : -1;
+            double spr = RTS.isPressed() ? 0 : -1;
+            Lift_SetPower(spl, spr);
+        }
+        Lift_SetPower(0, 0);
+
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
