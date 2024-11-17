@@ -33,7 +33,7 @@ public class Tele extends Robot {
         SetServoPos(0, LFA, RFA);
         SetServoPos(0, LAG, RAG);
         SetServoPos(0, LLG, RLG);
-        SetServoPos(0.25, D);
+        SetServoPos(0, D);
         controller = new Controller(1.2, 0.005, 0.1, 0 , 0.15, toRadian(0.75));
 
         setpoint = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -79,11 +79,13 @@ public class Tele extends Robot {
         double RT = gamepad2.right_trigger;
         double CurPos = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
         boolean du = gamepad2.dpad_up;
+        boolean dl = gamepad2.dpad_left;
         boolean dd = gamepad2.dpad_down;
         Left_isTouch  = LTS.isPressed();
         Right_isTouch = RTS.isPressed();
 
-        if (du) SetServoPos(1, LLG, RLG);
+        if (du) SetServoPos(0.66, LLG, RLG);
+//        if (dl) SetServoPos(0.9, LLG, RLG);
         if (dd) SetServoPos(0, LLG, RLG);
 
         if (Left_isTouch)  LL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -105,7 +107,7 @@ public class Tele extends Robot {
         }
         if (gamepad2.a) {
             while (true) {
-                Lift_SetPower(-0.05, -0.05);
+                Lift_SetPower(-0.1, -0.1);
             }
         }
 
@@ -118,14 +120,21 @@ public class Tele extends Robot {
         double sp = LT > 0.25 ? LT : RT > 0.25 ? -RT : 0;
 
         double spL = Auto_Lift ? ((CurPos < (LiftPos + 50) && CurPos > (LiftPos - 50)) ? 0 : CurPos > LiftPos ? -0.8 : 1) :
-                     (Left_isTouch  && RT > 0.25 ? 0 : CurPos > 6000 && LT > 0.25 ? 0 : sp);
+                     (Left_isTouch  && RT > 0.25 ? 0 : CurPos > High_Basket && LT > 0.25 ? 0 : sp);
 
         double spR = Auto_Lift ? ((CurPos < (LiftPos + 50) && CurPos > (LiftPos - 50)) ? 0 : CurPos > LiftPos ? -0.8 : 1) :
-                     (Right_isTouch  && RT > 0.25 ? 0 : CurPos > 6000 && LT > 0.25 ? 0 : sp);
+                     (Right_isTouch  && RT > 0.25 ? 0 : CurPos > High_Basket && LT > 0.25 ? 0 : sp);
 
-//        SetServoPos(Pos, LLG, RLG);
+
         Lift_SetPower(spL, spR);
+
+//        if (spL == 0 && spR == 0) {
+//            LL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            RL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        }
         if (CurPos < (LiftPos + 20) && CurPos > (LiftPos - 20)) Auto_Lift = false;
+
+        telemetry.addData("Lift", CurPos);
     }
 
     private void FrontArm() {
@@ -136,7 +145,7 @@ public class Tele extends Robot {
         double  rt = gamepad1.right_trigger;
 
         if (lt > 0.5) {
-            ArmPos = ArmPos - 0.025;
+            ArmPos = ArmPos - 0.005;
             ArmPos = Range.clip(ArmPos, 0, 0.5);
             SetServoPos(ArmPos, LA, RA);
         }
@@ -152,7 +161,7 @@ public class Tele extends Robot {
         }
 
         if (lb && On) SetServoPos(0.61, LFA, RFA);
-        if (rb && On) SetServoPos(0.69, LFA, RFA);
+        if (rb && On) SetServoPos(0.73, LFA, RFA);
 
         if (!(tp)) {
             press = false;
@@ -163,7 +172,7 @@ public class Tele extends Robot {
         if (!On) {
             SetServoPos(0.2, G);
             SetServoPos(0.15, LAG, RAG);
-            SetServoPos(0.68, LFA, RFA);
+            SetServoPos(0.61, LFA, RFA);
             SetServoPos(0.3, D);
             On = true;
             ls = true;
@@ -174,7 +183,7 @@ public class Tele extends Robot {
         sleep(300);
         SetServoPos(1, LAG, RAG);
         SetServoPos(0, LFA, RFA);
-        sleep(200);
+        sleep(500);
         SetServoPos(0, LA, RA);
         SetServoPos(0, AG);
         sleep(300);
@@ -239,8 +248,8 @@ public class Tele extends Robot {
         Init();
 
         while (!(LTS.isPressed()) && !(RTS.isPressed())) {
-            double spl = LTS.isPressed() ? 0 : -1;
-            double spr = RTS.isPressed() ? 0 : -1;
+            double spl = LTS.isPressed() ? 0 : -0.4;
+            double spr = RTS.isPressed() ? 0 : -0.4;
             Lift_SetPower(spl, spr);
         }
         Lift_SetPower(0, 0);
@@ -256,7 +265,6 @@ public class Tele extends Robot {
                 PlaceElement();
                 drop();
                 telemetry.addData("XYH", "%6f cm %6f cm", Posx, Posy);
-                telemetry.addData("Lift", "%d", CurrentPosition);
                 telemetry.addData("LeftLift", "%d", LL.getCurrentPosition());
                 telemetry.addData("RightLift", "%d", RL.getCurrentPosition());
 //                telemetry.addData("LRM", "%6d  %6d %6d", left_encoder_pos, right_encoder_pos, center_encoder_pos);
