@@ -51,7 +51,7 @@ public abstract class Robot extends LinearOpMode {
     private double Last_yaw;
 
     public final int Low_Chamber  = 1000;
-    public final int High_Chamber = 1300;
+    public final int High_Chamber = 900;
     public final int High_Basket  = 3000;
 
 
@@ -157,14 +157,15 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("Complete", IS_Complete);
             telemetry.update();
 
-            if (Math.abs(Vx) <= 1.0 && Math.abs(Vy) <= 1.0 && Math.abs(r) <= 1.0 && Lift_Power == 0) {
+            if (Math.abs(Vx) <= 0.2 && Math.abs(Vy) <= 0.2 && Math.abs(r) <= 1.0 && Lift_Power == 0) {
                 IS_Complete += 1;
-                if (IS_Complete > 5) break;
+                if (IS_Complete > 1) break;
                 continue;
             }
             IS_Complete = 0;
         }
         Break(Brake_Time);
+
     }
 
     public void LiftPower(double Lift_Power) {
