@@ -51,7 +51,7 @@ public abstract class Robot extends LinearOpMode {
     private double Last_yaw;
 
     public final int Low_Chamber  = 1000;
-    public final int High_Chamber = 900;
+    public final int High_Chamber = 850;
     public final int High_Basket  = 3000;
 
 
@@ -135,8 +135,8 @@ public abstract class Robot extends LinearOpMode {
 
             double r = pidR.Calculate(WrapRads(toRadian(setpoint) - heading));
             double d = Math.max(Math.abs(Vx) + Math.abs(Vy) + Math.abs(r), 1);
-            MovePower((power + y2 + x2 - r) / d, (power + y2 - x2 + r) / d,
-                      (power + y2 - x2 - r) / d, (power + y2 + x2 + r) / d);
+            MovePower((y2 + x2 - r) / d, (y2 - x2 + r) / d,
+                      (y2 - x2 - r) / d, (y2 + x2 + r) / d);
 
             double curPos = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
             double Lift_Power = (curPos < (height + 100) && curPos > (height - 100)) ? 0 : curPos > height ? -0.8 : 1;
@@ -157,7 +157,7 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("Complete", IS_Complete);
             telemetry.update();
 
-            if (Math.abs(Vx) <= 0.2 && Math.abs(Vy) <= 0.2 && Math.abs(r) <= 1.0 && Lift_Power == 0) {
+            if (Math.abs(Vx) <= 0.05 && Math.abs(Vy) <= 0.05 && Math.abs(r) <= 0.05 && Lift_Power == 0) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;

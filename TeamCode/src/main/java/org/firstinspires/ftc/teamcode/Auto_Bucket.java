@@ -33,7 +33,7 @@ public class Auto_Bucket extends Robot {
     }
 
     private void drop() {
-        SetServoPos(0.66, LLG, RLG);
+        SetServoPos(0.59, LLG, RLG);
 
         sleep(1000);
 
@@ -80,45 +80,45 @@ public class Auto_Bucket extends Robot {
         WaitForStart();
 
         if (opModeIsActive()) {
-            move(1.0, -0.77, 0.7, 218.0, new double[]{0.45, 0.01, 0.1},
-                    new double[]{2.5, 0.001, 0.2, 0.0}, new double[]{0.25, 0.00001, 0.01, 0.0}, new double[]{0.25, 0.001, 0.01, 0.0}, 0.0001, High_Basket);
+            move(1.0, -0.9, 0.6, 218.0, new double[]{0.25, 0.25, 0.25},
+                    new double[]{2.0, 0.01, 0.09, 0.0}, new double[]{0.15, 0.009, 0.01, 0.0}, new double[]{0.2, 0.007, 0.001, 0.0}, 0.0001, High_Basket);
 
             drop();
 
-            move(1.0, -0.7, 0.7, 188.0, new double[]{0.35, 0.004, 0.01},
-                    new double[]{2.0, 0.002, 0.15, 0.0}, new double[]{0.25, 0.02, 0.025, 0.0}, new double[]{0.35, 0.005, 0.01, 0.0}, 0.0001, 0);
+            move(1.0, -0.7, 0.67, 189.0, new double[]{0.25, 0.25, 0.25},
+                    new double[]{2.0, 0.002, 0.15, 0.0}, new double[]{0.35, 0.009, 0.04, 0.0}, new double[]{0.2, 0.007, 0.01, 0.0}, 0.0001, 0);
 
             keep(0);
 
-            move(1.0, -0.77, 0.7, 218.0, new double[]{0.45, 0.001, 0.06},
-                    new double[]{1.0, 0.0008, 0.1, 0.0}, new double[]{0.1, 0.08, 0.015, 0.0}, new double[]{0.15, 0.01, 0.01, 0.0}, 0.0001, High_Basket);
+            move(1.0, -0.9, 0.6, 218.0, new double[]{0.25, 0.25, 0.25},
+                    new double[]{2.0, 0.01, 0.09, 0.0}, new double[]{0.15, 0.009, 0.01, 0.0}, new double[]{0.2, 0.007, 0.001, 0.0}, 0.0001, High_Basket);
 
             drop();
 
-            move(1.0, -0.98, 0.7, 180.0, new double[]{0.35, 0.004, 0.01},
-                    new double[]{2.0, 0.002, 0.15, 0.0}, new double[]{0.25, 0.01, 0.025, 0.0}, new double[]{0.32, 0.001, 0.01, 0.0}, 0.0001, 0);
+            move(1.0, -0.96, 0.65, 180.0, new double[]{0.25, 0.25, 0.25},
+                    new double[]{2.0, 0.002, 0.15, 0.0}, new double[]{0.35, 0.01, 0.025, 0.0}, new double[]{0.2, 0.007, 0.01, 0.0}, 0.0001, 0);
 
             keep(0);
 
-            move(1.0, -0.77, 0.7, 218.0, new double[]{0.45, 0.001, 0.06},
-                    new double[]{1.0, 0.0008, 0.1, 0.0}, new double[]{0.1, 0.08, 0.015, 0.0}, new double[]{0.15, 0.01, 0.01, 0.0}, 0.0001, High_Basket);
+            move(1.0, -0.9, 0.6, 218.0, new double[]{0.25, 0.25, 0.25},
+                    new double[]{2.0, 0.01, 0.09, 0.0}, new double[]{0.15, 0.009, 0.01, 0.0}, new double[]{0.2, 0.007, 0.001, 0.0}, 0.0001, High_Basket);
 
             drop();
 
-            move(1.0, -1.0, 0.83, 150.0, new double[]{0.3, 0.0009, 0.008},
-                    new double[]{2.0, 0.002, 0.05, 0.0}, new double[]{0.15, 0.007, 0.0009, 0.0}, new double[]{0.3, 0.008, 0.01, 0.0}, 0.0001, 0);
+            move(1.0, -0.9, 0.73, 150.0, new double[]{0.25, 0.25, 0.25},
+                    new double[]{2.0, 0.002, 0.05, 0.0}, new double[]{0.35, 0.007, 0.001, 0.0}, new double[]{0.2, 0.007, 0.01, 0.0}, 0.0001, 0);
 
             keep(0.15);
 
-            move(1.0, -0.77, 0.7, 218.0, new double[]{0.45, 0.001, 0.06},
-                    new double[]{1.0, 0.0008, 0.1, 0.0}, new double[]{0.08, 0.009, 0.015, 0.0}, new double[]{0.15, 0.001, 0.01, 0.0}, 0.0001, High_Basket);
+            move(1.0, -0.9, 0.6, 218.0, new double[]{0.25, 0.25, 0.25},
+                    new double[]{2.0, 0.01, 0.09, 0.0}, new double[]{0.15, 0.007, 0.01, 0.0}, new double[]{0.2, 0.007, 0.001, 0.0}, 0.0001, High_Basket);
 
             drop();
 
-            move(1.0, 0.3, 2.1, 90.0, new double[]{0.45, 0.05, 0.08},
-                    new double[]{4.0, 0.01, 0.8, 0.0}, new double[]{0.25, 0.01, 0.0095, 0.0}, new double[]{0.35, 0.01, 0.01, 0.0}, 0.0001, 800);
+            move(1.0, 0.45, 2.1, 90.0, new double[]{0.25, 0.25, 0.25},
+                    new double[]{2.0, 0.01, 0.2, 0.0}, new double[]{0.09, 0.01, 0.01, 0.0}, new double[]{0.2, 0.007, 0.01, 0.0}, 0.0001, 800);
 
-            SetServoPos(0.59, LLG, RLG);
+            SetServoPos(0.55, LLG, RLG);
 
             sleep(10000);
         }
