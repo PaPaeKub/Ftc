@@ -135,8 +135,8 @@ public abstract class Robot extends LinearOpMode {
 
             double r = pidR.Calculate(WrapRads(toRadian(setpoint) - heading));
             double d = Math.max(Math.abs(Vx) + Math.abs(Vy) + Math.abs(r), 1);
-            MovePower((y2 + x2 - r) / d, (y2 - x2 + r) / d,
-                      (y2 - x2 - r) / d, (y2 + x2 + r) / d);
+            MovePower(((y2 + x2 - r) / d) * power, ((y2 - x2 + r) / d) * power,
+                      ((y2 - x2 - r) / d) * power, ((y2 + x2 + r) / d) * power);
 
             double curPos = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
             double Lift_Power = (curPos < (height + 100) && curPos > (height - 100)) ? 0 : curPos > height ? -0.8 : 1;
