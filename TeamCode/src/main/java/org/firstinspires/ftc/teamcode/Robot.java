@@ -145,8 +145,8 @@ public abstract class Robot extends LinearOpMode {
 
             double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 //            telemetry.addData("Move_Factor", Move_Factor);
-//            telemetry.addData("power" , Lift_Power);
-//            telemetry.addData("lift", curPos);
+            telemetry.addData("power" , Lift_Power);
+            telemetry.addData("lift", curPos);
 //            telemetry.addData("XY", "%6f cm %6f cm" , Posx, Posy);
 //            telemetry.addData("tagetXtargetY", "%6f cm %6f cm" , targetx, targety);
 //            telemetry.addData("R", "%6f cm/s %6f cm" , r,  pidR.ErrorTolerance);
