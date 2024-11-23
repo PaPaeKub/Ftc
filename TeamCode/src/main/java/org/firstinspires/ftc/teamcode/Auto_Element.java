@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.util.Set;
 
-@Autonomous(name="Auto_Element")
+@Autonomous(name="Auto_Sample")
 public class Auto_Element extends Robot {
     int i = 0;
 
