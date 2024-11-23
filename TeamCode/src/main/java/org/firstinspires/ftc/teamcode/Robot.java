@@ -158,7 +158,7 @@ public abstract class Robot extends LinearOpMode {
 //            telemetry.addData("Complete", IS_Complete);
             telemetry.update();
 
-            if (Math.abs(Vx) <= 0.01 && Math.abs(Vy) <= 0.01 && Math.abs(r) == 0 && Lift_Power == 0) {
+            if (Math.abs(Vx) <= 0.001 && Math.abs(Vy) <= 0.001 && Math.abs(r) == 0 && Lift_Power == 0) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;
