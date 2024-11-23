@@ -47,8 +47,8 @@ public class Controller {
         this.Derivative  = Math.abs(Dt) > 1E-6 ? (Error - LastError) / Dt : 0;
         this.LastError   = Error;
         this.BaseSpeed   = baseSpeed * SigNum(error);
-        return (this.Error * this.Kp) + (this.Integral * this.Ki) + (this.Derivative * this.Kd) + (this.Setpoint * this.Kf);
+        return (this.Error * this.Kp) + (this.Integral * this.Ki) + (this.Derivative * this.Kd) + (this.Setpoint * this.Kf) + this.BaseSpeed;
     }
 
-    public boolean atSetpoint() { return Math.abs(this.Error) < this.ErrorTolerance; }
+    public boolean atSetpoint() { return Math.abs(this.Error) <= this.ErrorTolerance; }
 }

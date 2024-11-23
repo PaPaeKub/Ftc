@@ -140,25 +140,25 @@ public abstract class Robot extends LinearOpMode {
                       ((y2 - x2 - r) / d) * Move_Factor, ((y2 + x2 + r) / d) * Move_Factor);
 
             double curPos = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
-            double Lift_Power = (curPos < (height + 100) && curPos > (height - 100)) ? 0 : curPos > height ? -0.8 : 1;
+            double Lift_Power = (curPos < (height + 100) && curPos > (height - 100)) ? 0 : curPos > height ? -1 : 1;
             LiftPower(Lift_Power);
 
             double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 //            telemetry.addData("Move_Factor", Move_Factor);
-            telemetry.addData("power" , Lift_Power);
-            telemetry.addData("lift", curPos);
+//            telemetry.addData("power" , Lift_Power);
+//            telemetry.addData("lift", curPos);
 //            telemetry.addData("XY", "%6f cm %6f cm" , Posx, Posy);
 //            telemetry.addData("tagetXtargetY", "%6f cm %6f cm" , targetx, targety);
-//            telemetry.addData("R", "%6f cm/s %6f cm" , r,  pidR.ErrorTolerance);
-//            telemetry.addData("X", "%6f cm/s %6f cm" , Vx, DelthaX.ErrorTolerance);
-//            telemetry.addData("Y", "%6f cm/s %6f cm" , Vy, DelthaY.ErrorTolerance);
-//            telemetry.addData("ErrorR", pidR.Error);
-//            telemetry.addData("ErrorX", DelthaX.Error);
-//            telemetry.addData("ErrorY", DelthaY.Error);
+            telemetry.addData("R", "%6f cm/s %6f cm" , r,  pidR.ErrorTolerance);
+            telemetry.addData("X", "%6f cm/s %6f cm" , Vx, DelthaX.ErrorTolerance);
+            telemetry.addData("Y", "%6f cm/s %6f cm" , Vy, DelthaY.ErrorTolerance);
+            telemetry.addData("ErrorR", pidR.Error);
+            telemetry.addData("ErrorX", DelthaX.Error);
+            telemetry.addData("ErrorY", DelthaY.Error);
 //            telemetry.addData("Complete", IS_Complete);
             telemetry.update();
 
-            if (Math.abs(Vx) <= 0.01 && Math.abs(Vy) <= 0.01 && Math.abs(r) <= 0.05 && Lift_Power == 0) {
+            if (Math.abs(Vx) <= 0.01 && Math.abs(Vy) <= 0.01 && Math.abs(r) == 0 && Lift_Power == 0) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;
@@ -253,8 +253,6 @@ public abstract class Robot extends LinearOpMode {
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection .RIGHT)));
         // Reverse Servo
-        D.setDirection(Servo.Direction.REVERSE);
-        G.setDirection(Servo.Direction.REVERSE);
         RA.setDirection(Servo.Direction.REVERSE);
         LFA.setDirection(Servo.Direction.REVERSE);
         LLG.setDirection(Servo.Direction.REVERSE);

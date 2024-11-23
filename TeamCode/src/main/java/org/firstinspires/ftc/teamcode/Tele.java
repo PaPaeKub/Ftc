@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.util.Set;
 
-@TeleOp(name="Tele_Bucket")
+@TeleOp(name="Tele")
 public class Tele extends Robot {
 
     private Controller controller;
@@ -20,7 +20,7 @@ public class Tele extends Robot {
     // Variables
     int Level, CurrentPosition = 0;
     double setpoint = 0, AL_Ang = 0, ArmPos = 0, LiftPos = 0;
-    boolean p = true, kp = false, ls = false, On = false, ag = false, press_ag = false, press = false, r_disable = false, Left_isTouch = false, Right_isTouch = false,  Auto_Lift = false, x_press = false, Auto_Arm = false;
+    boolean kp = false, ls = false, On = false, ag = false, press_ag = false, press = false, r_disable = false, Left_isTouch = false, Right_isTouch = false,  Auto_Lift = false, x_press = false, Auto_Arm = false;
     double CurrentTime = System.nanoTime() * 1E-9,  lastRXtime = CurrentTime;
     private void Init() {
         // Initialize Robot
@@ -146,13 +146,14 @@ public class Tele extends Robot {
         if (rt > 0.5) {
             SetServoPos(0, LLG, RLG);
             SetServoPos(0.5, LA, RA);
-            SetServoPos(0.15, G);
-            SetServoPos(0.2, D);
+            SetServoPos(0.2, G);
+            SetServoPos(0.3, D);
             SetServoPos(0.15, LAG, RAG);
             SetServoPos(0.61, LFA, RFA);
+            ArmPos = 0.5;
             On = true;
             ls = true;
-            kp = true;
+            kp = false;
         }
 
         if (lb && On) SetServoPos(0.61, LFA, RFA);
@@ -175,13 +176,13 @@ public class Tele extends Robot {
         }
         Sleep();
         SetServoPos(0, G);
-        sleep(300);
+        sleep(100);
         SetServoPos(1, LAG, RAG);
         SetServoPos(0, LFA, RFA);
-        sleep(300);
+        sleep(150);
         SetServoPos(0, AG);
         SetServoPos(0, LA, RA);
-        sleep(300);
+        sleep(250);
         SetServoPos(0, D);
         sleep(100);
         SetServoPos(0.2, G);
@@ -220,36 +221,37 @@ public class Tele extends Robot {
             return;
         }
         if (x_press) return;
+        x_press = true;
         if (!kp) {
+            Sleep();
             SetServoPos(0, G);
-            sleep(300);
+            sleep(150);
             SetServoPos(0, LFA, RFA);
             sleep(100);
             SetServoPos(0, AG);
             SetServoPos(0, LA, RA);
             SetServoPos(0, LAG, RAG);
-            x_press = true;
-            On = false;
             ls = false;
-            press_ag = false;
             ag = false;
             kp = true;
+            On = false;
             return;
         }
+        Sleep();
         SetServoPos(0.5, LA, RA);
         SetServoPos(0.15, LAG, RAG);
         SetServoPos(0.69, LFA, RFA);
         sleep(300);
-        SetServoPos(0.2, G);
+        SetServoPos(0.3, G);
         sleep(300);
         SetServoPos(0, LA, RA);
         SetServoPos(0, LAG, RAG);
         SetServoPos(0, LFA, RFA);
+        SetServoPos(0, AG);
         kp = false;
-        On = false;
         ls = false;
-        press_ag = false;
         ag = false;
+        On = false;
     }
 
     private void drop() {
