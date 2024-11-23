@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import java.util.Set;
-
 @Autonomous(name="Auto_Sample")
-public class Auto_Element extends Robot {
+public class Auto_Sample extends Robot {
     int i = 0;
 
     private void Init() {
