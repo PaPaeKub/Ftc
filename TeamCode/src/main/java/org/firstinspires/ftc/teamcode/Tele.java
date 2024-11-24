@@ -20,7 +20,8 @@ public class Tele extends Robot {
     // Variables
     int Level, CurrentPosition = 0;
     double setpoint = 0, AL_Ang = 0, ArmPos = 0, LiftPos = 0;
-    boolean kp = false, ls = false, On = false, ag = false, press_ag = false, press = false, r_disable = false, Left_isTouch = false, Right_isTouch = false,  Auto_Lift = false, x_press = false, Auto_Arm = false;
+    boolean kp = false, ls = false, On = false, ag = false, press_ag = false, press = false, r_disable = false, Left_isTouch = false, Right_isTouch = false,  Auto_Lift = false, x_press = false, Auto_Arm = false,
+            a_press = false, On_Lift = false;
     double CurrentTime = System.nanoTime() * 1E-9,  lastRXtime = CurrentTime;
     private void Init() {
         // Initialize Robot
@@ -63,7 +64,7 @@ public class Tele extends Robot {
         // Denominator for division to get no more than 1
         double d = Math.max(Math.abs(x2) + Math.abs(y2) + Math.abs(r), 1);
         // Lift limit speed
-        double l = lift > High_Basket - 1000 ? 0.5 : lift > 850 ? 0.8 : ls ? 0.6 : 1;
+        double l = lift > High_Basket - 500 ? 0.5 : lift > 2000 ? 0.8 : ls ? 0.6 : 1;
 
         MovePower(((y2 + x2 + r) / d) * l, ((y2 - x2 - r) / d) * l,
                   ((y2 - x2 + r) / d) * l, ((y2 + x2 - r) / d) * l);
@@ -79,11 +80,11 @@ public class Tele extends Robot {
         boolean du = gamepad2.dpad_up;
         boolean dl = gamepad2.dpad_left;
         boolean dd = gamepad2.dpad_down;
+        boolean a = gamepad2.a;
         Left_isTouch  = LTS.isPressed();
         Right_isTouch = RTS.isPressed();
 
         if (du) SetServoPos(1, LLG, RLG);
-//        if (dl) SetServoPos(0.9, LLG, RLG);
         if (dd) SetServoPos(0, LLG, RLG);
 
         if (Left_isTouch) {
@@ -104,11 +105,7 @@ public class Tele extends Robot {
             LiftPos = 0;
             SetServoPos(0, LLG, RLG);
         }
-        if (gamepad2.a) {
-            while (true) {
-                Lift_SetPower(-0.1, -0.1);
-            }
-        }
+
         if (LT > 0 || Auto_Lift) {
             LL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             RL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -117,18 +114,30 @@ public class Tele extends Robot {
 //        double Pos = Auto_Arm && LT < 0.5 ? arm : (Math.max(LL.getCurrentPosition(), RL.getCurrentPosition()) > LiftPos - 500 ? 1 : 0);
         double sp = LT > 0.25 ? LT : RT > 0.25 ? -RT : 0;
 
-        double power = Auto_Lift ? ((CurPos < (LiftPos + 50) && CurPos > (LiftPos - 50)) ? 0 : CurPos > LiftPos ? -0.8 : 1) :
+        double power = On_Lift ? -1 : Auto_Lift ? ((CurPos < (LiftPos + 50) && CurPos > (LiftPos - 50)) ? 0 : CurPos > LiftPos ? -0.8 : 1) :
                      (Left_isTouch  && RT > 0.25 ? 0 : CurPos > High_Basket && LT > 0.25 ? 0 : sp);
 
         Lift_SetPower(power, power);
 
-//        if (spL == 0 && spR == 0) {
-//            LL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            RL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        }
+        if (power == 0) {
+            LL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            RL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
         if (CurPos < (LiftPos + 20) && CurPos > (LiftPos - 20)) Auto_Lift = false;
 
         telemetry.addData("Lift", CurPos);
+
+        if (!(a)) {
+            a_press = false;
+            return;
+        }
+        if (a_press) return;
+        a_press = true;
+        if (!(On_Lift)) {
+            On_Lift = true;
+            return;
+        }
+        On_Lift = false;
     }
 
     private void FrontArm() {
