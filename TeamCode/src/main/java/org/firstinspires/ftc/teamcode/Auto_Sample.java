@@ -52,7 +52,7 @@ public class Auto_Sample extends Robot {
         WaitForStart();
         if (opModeIsActive()) {
             move(1.0, -0.15, 1.19, 0.0, new double[]{0.05, 0.1, 0.1},
-                    new double[]{2.0, 0.01, 0.03, 0.0}, new double[]{0.06, 0.05, 0.0005, 0.0}, new double[]{0.08, 0.05, 0.01, 0.0}, 0.0001, 1700);
+                    new double[]{2.0, 0.01, 0.03, 0.0}, new double[]{0.1, 0.05, 0.0005, 0.0}, new double[]{0.1, 0.05, 0.01, 0.0}, 0.0001, High_Chamber);
 
             move(1.0, -0.15, 1.19, 0.0, new double[]{0.05, 0.1, 0.1},
                     new double[]{2.0, 0.1, 0.3, 0.0}, new double[]{0.1, 0.1, 0.01, 0.0}, new double[]{0.1, 0.1, 0.008, 0.0}, 0.0001, 1100);
@@ -84,8 +84,8 @@ public class Auto_Sample extends Robot {
 
 
 
-            move(1.0, -0.35, 1.2, 0.0, new double[]{0.05, 0.1, 0.1},
-                    new double[]{3.0, 0.0001, 0.04, 0.0}, new double[]{0.09, 0.001, 0.001, 0.0}, new double[]{0.06, 0.001, 0.002, 0.0}, 0.0001, 1600);
+            move(1.0, -0.35, 1.24, 0.0, new double[]{0.05, 0.1, 0.1},
+                    new double[]{3.0, 0.0001, 0.04, 0.0}, new double[]{0.09, 0.001, 0.001, 0.0}, new double[]{0.06, 0.001, 0.002, 0.0}, 0.0001, High_Chamber);
 
             move(1.0, -0.35, 1.2, 0.0, new double[]{0.05, 0.1, 0.1},
                     new double[]{3.0, 0.0001, 0.02, 0.0}, new double[]{0.04, 0.5, 0.02, 0.0}, new double[]{0.06, 0.001, 0.002, 0.0}, 0.0001, 1100);
@@ -98,8 +98,8 @@ public class Auto_Sample extends Robot {
 
 
 
-            move(1.0, -0.45, 1.2, 0.0, new double[]{0.05, 0.1, 0.1},
-                    new double[]{3.0, 0.0001, 0.04, 0.0}, new double[]{0.09, 0.001, 0.001, 0.0}, new double[]{0.06, 0.0001, 0.002, 0.0}, 0.0001, 1600);
+            move(1.0, -0.45, 1.24, 0.0, new double[]{0.05, 0.1, 0.1},
+                    new double[]{3.0, 0.0001, 0.04, 0.0}, new double[]{0.09, 0.001, 0.001, 0.0}, new double[]{0.06, 0.0001, 0.002, 0.0}, 0.0001, High_Chamber);
 
             move(1.0, -0.45, 1.2, 0.0, new double[]{0.05, 0.1, 0.1},
                     new double[]{3.0, 0.0001, 0.02, 0.0}, new double[]{0.09, 0.0002, 0.02, 0.0}, new double[]{0.09, 0.0001, 0.002, 0.0}, 0.0001, 1100);

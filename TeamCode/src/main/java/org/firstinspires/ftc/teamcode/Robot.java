@@ -20,7 +20,7 @@ public abstract class Robot extends LinearOpMode {
     public IMU imu;
     public VisionPortal visionPortal;
     public Servo G, LA, RA, LFA, RFA, AG, LAG, RAG, LLG, RLG, D;
-    public DcMotorEx FL, FR, BL, BR, RL, LL,  encoder1, encoder2, encoder3 ;
+    public DcMotorEx FL, FR, BL, BR, RL, LL, LH, RH,  encoder1, encoder2, encoder3 ;
     public TouchSensor LTS, RTS;
     public int FL_Target, FR_Target, BL_Target, BR_Target;
     public final double[] tileSize            = {60.96, 60.96};  // Width * Length
@@ -51,8 +51,8 @@ public abstract class Robot extends LinearOpMode {
     private double Last_yaw;
 
     public final int Low_Chamber  = 1000;
-    public final int High_Chamber = 850;
-    public final int High_Basket  = 3000;
+    public final int High_Chamber = 2000;
+    public final int High_Basket  = 3350;
 
 
 
@@ -140,7 +140,7 @@ public abstract class Robot extends LinearOpMode {
                       ((y2 - x2 - r) / d) * Move_Factor, ((y2 + x2 + r) / d) * Move_Factor);
 
             double curPos = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
-            double Lift_Power = (curPos < (height + 100) && curPos > (height - 100)) ? 0 : curPos > height ? -1 : 1;
+            double Lift_Power = AtTargetRange(curPos, height, 50) ? 0 : curPos > height ? -1 : 1; // (curPos < (height + 100) && curPos > (height - 100))
             LiftPower(Lift_Power);
 
             double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -158,7 +158,7 @@ public abstract class Robot extends LinearOpMode {
 //            telemetry.addData("Complete", IS_Complete);
             telemetry.update();
 
-            if (Math.abs(Vx) <= 0.001 && Math.abs(Vy) <= 0.001 && Math.abs(r) == 0 && Lift_Power == 0) {
+            if (Math.abs(Vx) == 0 && Math.abs(Vy) == 0 && Math.abs(r) == 0 && Lift_Power == 0) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;
@@ -167,6 +167,11 @@ public abstract class Robot extends LinearOpMode {
         }
         Break(Brake_Time);
 
+    }
+
+    public void Hoist(double Power) {
+        LH.setPower(Power);
+        RH.setPower(Power);
     }
 
     public void LiftPower(double Lift_Power) {
@@ -235,6 +240,7 @@ public abstract class Robot extends LinearOpMode {
         FL  = hardwareMap.get(DcMotorEx.class,   "Front_Left");           FR  = hardwareMap.get(DcMotorEx.class, "Front_Right");
         BL  = hardwareMap.get(DcMotorEx.class,   "Back_Left");            BR  = hardwareMap.get(DcMotorEx.class, "Back_Right");
         LL  = hardwareMap.get(DcMotorEx.class,   "Left_Lift");            RL  = hardwareMap.get(DcMotorEx.class, "Right_Lift");
+        LH  = hardwareMap.get(DcMotorEx.class,   "Left_Hoist");           RH  = hardwareMap.get(DcMotorEx.class, "Right_Hoist");
         LTS = hardwareMap.get(TouchSensor.class, "Left_Touch");           RTS = hardwareMap.get(TouchSensor.class, "Right_Touch");
 
         G   = hardwareMap.get(Servo.class, "Gripper");                    LA  = hardwareMap.get(Servo.class, "Left_Arm");
@@ -290,6 +296,7 @@ public abstract class Robot extends LinearOpMode {
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
         RL.setDirection(DcMotorSimple.Direction.REVERSE);
+        RH.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // SetBehavior Motors
 
@@ -300,6 +307,9 @@ public abstract class Robot extends LinearOpMode {
 
         LL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        LH.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RH.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // SetPower Motors
 

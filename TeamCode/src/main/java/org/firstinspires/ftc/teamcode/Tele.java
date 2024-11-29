@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Utilize.AtTargetRange;
 import static org.firstinspires.ftc.teamcode.Utilize.WrapRads;
 import static org.firstinspires.ftc.teamcode.Utilize.toRadian;
 import static org.firstinspires.ftc.teamcode.Utilize.toDegree;
@@ -33,7 +34,7 @@ public class Tele extends Robot {
         SetServoPos(0, LAG, RAG);
         SetServoPos(0, LLG, RLG);
         SetServoPos(0, D);
-        controller = new Controller(1.2, 0.005, 0.1, 0 , 0.15, toRadian(0.75));
+        controller = new Controller(1.2, 0.01, 0.17, 0 , 0.1, toRadian(0.75));
 
         setpoint = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
@@ -87,6 +88,10 @@ public class Tele extends Robot {
         if (du) SetServoPos(1, LLG, RLG);
         if (dd) SetServoPos(0, LLG, RLG);
 
+//        if (du) Hoist(1);
+//        if (dd) Hoist(-1);
+//        if (dl) Hoist(0);
+
         if (Left_isTouch) {
             LL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             RL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -114,7 +119,7 @@ public class Tele extends Robot {
 //        double Pos = Auto_Arm && LT < 0.5 ? arm : (Math.max(LL.getCurrentPosition(), RL.getCurrentPosition()) > LiftPos - 500 ? 1 : 0);
         double sp = LT > 0.25 ? LT : RT > 0.25 ? -RT : 0;
 
-        double power = On_Lift ? -1 : Auto_Lift ? ((CurPos < (LiftPos + 50) && CurPos > (LiftPos - 50)) ? 0 : CurPos > LiftPos ? -0.8 : 1) :
+        double power = On_Lift ? -1 : Auto_Lift ? (AtTargetRange(CurPos, LiftPos, 50) ? 0 : CurPos > LiftPos ? -0.8 : 1) :
                      (Left_isTouch  && RT > 0.25 ? 0 : CurPos > High_Basket && LT > 0.25 ? 0 : sp);
 
         Lift_SetPower(power, power);
@@ -155,7 +160,7 @@ public class Tele extends Robot {
         if (rt > 0.5) {
             SetServoPos(0, LLG, RLG);
             SetServoPos(0.5, LA, RA);
-            SetServoPos(0.2, G);
+            SetServoPos(0, G);
             SetServoPos(0.3, D);
             SetServoPos(0.15, LAG, RAG);
             SetServoPos(0.61, LFA, RFA);
@@ -175,7 +180,7 @@ public class Tele extends Robot {
         if (press) return;
         press = true;
         if (!On) {
-            SetServoPos(0.15, G);
+            SetServoPos(0, G);
             SetServoPos(0.15, LAG, RAG);
             SetServoPos(0.61, LFA, RFA);
             SetServoPos(0.2, D);
@@ -184,7 +189,7 @@ public class Tele extends Robot {
             return;
         }
         Sleep();
-        SetServoPos(0, G);
+        SetServoPos(0.3, G);
         sleep(100);
         SetServoPos(1, LAG, RAG);
         SetServoPos(0, LFA, RFA);
@@ -194,7 +199,7 @@ public class Tele extends Robot {
         sleep(250);
         SetServoPos(0, D);
         sleep(100);
-        SetServoPos(0.2, G);
+        SetServoPos(0, G);
         sleep(100);
         SetServoPos(0, LAG, RAG);
         ArmPos = 0;
@@ -233,7 +238,7 @@ public class Tele extends Robot {
         x_press = true;
         if (!kp) {
             Sleep();
-            SetServoPos(0, G);
+            SetServoPos(0.3, G);
             sleep(150);
             SetServoPos(0, LFA, RFA);
             sleep(100);
@@ -251,8 +256,8 @@ public class Tele extends Robot {
         SetServoPos(0.15, LAG, RAG);
         SetServoPos(0.69, LFA, RFA);
         sleep(300);
-        SetServoPos(0.3, G);
-        sleep(300);
+        SetServoPos(0, G);
+        sleep(100);
         SetServoPos(0, LA, RA);
         SetServoPos(0, LAG, RAG);
         SetServoPos(0, LFA, RFA);
@@ -267,8 +272,8 @@ public class Tele extends Robot {
         boolean lb_press = gamepad2.left_bumper;
         boolean rb_press = gamepad2.right_bumper;
 
-        if (lb_press) SetServoPos(0, D);
-        if (rb_press) SetServoPos(0.25, D);
+        if (lb_press) SetServoPos(0.25, D);
+        if (rb_press) SetServoPos(0, D);
     }
 
     @Override
