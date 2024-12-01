@@ -51,7 +51,7 @@ public abstract class Robot extends LinearOpMode {
     private double Last_yaw;
 
     public final int Low_Chamber  = 1000;
-    public final int High_Chamber = 2000;
+    public final int High_Chamber = 1800;
     public final int High_Basket  = 3350;
 
 
@@ -140,7 +140,7 @@ public abstract class Robot extends LinearOpMode {
                       ((y2 - x2 - r) / d) * Move_Factor, ((y2 + x2 + r) / d) * Move_Factor);
 
             double curPos = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
-            double Lift_Power = AtTargetRange(curPos, height, 50) ? 0 : curPos > height ? -1 : 1; // (curPos < (height + 100) && curPos > (height - 100))
+            double Lift_Power = AtTargetRange(curPos, height, 100) ? 0 : curPos > height ? -0.8 : 1; // (curPos < (height + 100) && curPos > (height - 100))
             LiftPower(Lift_Power);
 
             double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -158,7 +158,7 @@ public abstract class Robot extends LinearOpMode {
 //            telemetry.addData("Complete", IS_Complete);
             telemetry.update();
 
-            if (Math.abs(Vx) == 0 && Math.abs(Vy) == 0 && Math.abs(r) == 0 && Lift_Power == 0) {
+            if (Math.abs(Vx) <= 0.01 && Math.abs(Vy) <= 0.01 && Math.abs(r) <= 0.01 && Lift_Power == 0) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;
