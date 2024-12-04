@@ -103,7 +103,7 @@ public class Tele extends Robot {
         }
         if (gamepad2.y) {
             Auto_Lift = true;
-            LiftPos = 3200;
+            LiftPos = High_Basket;
         }
         if (gamepad2.b) {
             Auto_Lift = true;
@@ -171,7 +171,7 @@ public class Tele extends Robot {
         }
 
         if (lb && On) SetServoPos(0.61, LFA, RFA);
-        if (rb && On) SetServoPos(0.70, LFA, RFA);
+        if (rb && On) SetServoPos(0.68, LFA, RFA);
 
         if (!(tp)) {
             press = false;
@@ -189,14 +189,15 @@ public class Tele extends Robot {
             return;
         }
         Sleep();
-        SetServoPos(0.23, G);
+        SetServoPos(0.28, G);
         sleep(100);
         SetServoPos(1, LAG, RAG);
         SetServoPos(0, LFA, RFA);
-        sleep(150);
+        sleep(250);
         SetServoPos(0, AG);
         SetServoPos(0, LA, RA);
-        sleep(400);
+        long time = ag ? 300 : 250;
+        sleep(time);
         SetServoPos(0, D);
         sleep(100);
         SetServoPos(0, G);
@@ -238,7 +239,7 @@ public class Tele extends Robot {
         x_press = true;
         if (!kp) {
             Sleep();
-            SetServoPos(0.23, G);
+            SetServoPos(0.28, G);
             sleep(150);
             SetServoPos(0, LFA, RFA);
             sleep(100);
