@@ -43,7 +43,7 @@ public class Controller {
             return 0;
         }
         this.Integral    = Integral + (Error * Dt);
-        this.Integral    = Range.clip(Integral, -1, 1);
+//        this.Integral    = Range.clip(Integral, -1, 1);
         this.Derivative  = Math.abs(Dt) > 1E-6 ? (Error - LastError) / Dt : 0;
         this.LastError   = Error;
         this.BaseSpeed   = baseSpeed * SigNum(error);
