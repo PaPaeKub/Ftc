@@ -51,7 +51,7 @@ public abstract class Robot extends LinearOpMode {
     private double Last_yaw;
 
     public final int Low_Chamber  = 1000;
-    public final int High_Chamber = 1800;
+    public final int High_Chamber = 1700;
     public final int High_Basket  = 3350;
 
 
@@ -135,23 +135,21 @@ public abstract class Robot extends LinearOpMode {
 
             double r = pidR.Calculate(WrapRads(toRadian(setpoint) - heading));
             double d = Math.max(Math.abs(Vx) + Math.abs(Vy) + Math.abs(r), 1);
-            double Move_Factor = Range.clip((this.Current_Time - this.Last_Time) * 2, 0, 1);
-            MovePower(((y2 + x2 - r) / d) * Move_Factor, ((y2 - x2 + r) / d) * Move_Factor,
-                      ((y2 - x2 - r) / d) * Move_Factor, ((y2 + x2 + r) / d) * Move_Factor);
+            MovePower((y2 + x2 - r) / d, (y2 - x2 + r) / d,
+                      (y2 - x2 - r) / d, (y2 + x2 + r) / d);
 
             double curPos = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
-            double Lift_Power = AtTargetRange(curPos, height, 100) ? 0 : curPos > height ? -0.8 : 1; // (curPos < (height + 100) && curPos > (height - 100))
+            double Lift_Power = AtTargetRange(curPos, height, 80) ? 0 : curPos > height ? -0.8 : 1;
             LiftPower(Lift_Power);
 
-            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 //            telemetry.addData("Move_Factor", Move_Factor);
-//            telemetry.addData("power" , Lift_Power);
+            telemetry.addData("power" , Lift_Power);
 //            telemetry.addData("lift", curPos);
 //            telemetry.addData("XY", "%6f cm %6f cm" , Posx, Posy);
 //            telemetry.addData("tagetXtargetY", "%6f cm %6f cm" , targetx, targety);
-            telemetry.addData("R", "%6f cm/s %6f cm" , r,  pidR.ErrorTolerance);
-            telemetry.addData("X", "%6f cm/s %6f cm" , Vx, DelthaX.ErrorTolerance);
-            telemetry.addData("Y", "%6f cm/s %6f cm" , Vy, DelthaY.ErrorTolerance);
+//            telemetry.addData("R", "%6f cm/s %6f cm" , r,  pidR.ErrorTolerance);
+//            telemetry.addData("X", "%6f cm/s %6f cm" , Vx, DelthaX.ErrorTolerance);
+//            telemetry.addData("Y", "%6f cm/s %6f cm" , Vy, DelthaY.ErrorTolerance);
             telemetry.addData("ErrorR", pidR.Error);
             telemetry.addData("ErrorX", DelthaX.Error);
             telemetry.addData("ErrorY", DelthaY.Error);
@@ -169,11 +167,6 @@ public abstract class Robot extends LinearOpMode {
 
     }
 
-    public void Hoist(double Power) {
-        LH.setPower(Power);
-        RH.setPower(Power);
-    }
-
     public void LiftPower(double Lift_Power) {
         LL.setPower(Lift_Power);
         RL.setPower(Lift_Power);
@@ -186,8 +179,8 @@ public abstract class Robot extends LinearOpMode {
 
     public void MovePower(double Front_Left, double Front_Right,
                           double Back_Left,  double Back_Right) {
-        FL.setPower(Front_Left * 0.9);
-        FR.setPower(Front_Right * 0.9);
+        FL.setPower(Front_Left);
+        FR.setPower(Front_Right);
         BL.setPower(Back_Left);
         BR.setPower(Back_Right);
     }
@@ -262,7 +255,7 @@ public abstract class Robot extends LinearOpMode {
         RA.setDirection(Servo.Direction.REVERSE);
         LFA.setDirection(Servo.Direction.REVERSE);
         LLG.setDirection(Servo.Direction.REVERSE);
-        RAG.setDirection(Servo.Direction.REVERSE);
+        LAG.setDirection(Servo.Direction.REVERSE);
 
         // Set Servo Position
 

@@ -36,14 +36,13 @@ public class Controller {
         if (LastTime == 0) LastTime = CurrentTime;
         this.Dt         = CurrentTime - LastTime;
         this.LastTime    = CurrentTime;
-        this.Error       = error;  // Error = Setpoint - Current
+        this.Error       = error;
         boolean Is_Error_In_Tolerance = atSetpoint();
         if (Is_Error_In_Tolerance) {
             this.Integral = 0;
             return 0;
         }
         this.Integral    = Integral + (Error * Dt);
-//        this.Integral    = Range.clip(Integral, -1, 1);
         this.Derivative  = Math.abs(Dt) > 1E-6 ? (Error - LastError) / Dt : 0;
         this.LastError   = Error;
         this.BaseSpeed   = baseSpeed * SigNum(error);
