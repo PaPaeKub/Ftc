@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.util.Set;
 
-@TeleOp(name="Tele")
+@TeleOp(name="Tele", group = "robot")
 public class Tele extends Robot {
 
     private Controller controller;
@@ -70,8 +70,8 @@ public class Tele extends Robot {
 
         MovePower(((y2 + x2 + r) / d) * l, ((y2 - x2 - r) / d) * l,
                   ((y2 - x2 + r) / d) * l, ((y2 + x2 - r) / d) * l);
-        telemetry.addData("yaw", toDegree(yaw));
-        telemetry.addData("setpoint", toDegree(setpoint));
+//        telemetry.addData("yaw", toDegree(yaw));
+//        telemetry.addData("setpoint", toDegree(setpoint));
 //        telemetry.addData("error", controller.Error);
     }
 
@@ -109,7 +109,7 @@ public class Tele extends Robot {
 
         double sp = LT > 0.25 ? LT : RT > 0.25 ? -RT : 0;
 
-        double power = On_Lift ? -1 : Auto_Lift ? (AtTargetRange(CurPos, LiftPos, 50) ? 0 : CurPos > LiftPos ? -0.8 : 1) :
+        double power = On_Lift ? -1 : Auto_Lift ? (AtTargetRange(CurPos, LiftPos, 50) ? 0 : CurPos > LiftPos ? -0.6 : 1) :
                       (Left_isTouch  && RT > 0.25 ? 0 : CurPos > High_Basket && LT > 0.25 ? 0 : sp);
 
         LiftPower(power);
@@ -117,6 +117,7 @@ public class Tele extends Robot {
         if (power == 0) {
             LL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             RL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            ML.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         if (AtTargetRange(CurPos, LiftPos, 20)) Auto_Lift = false;
 
@@ -153,15 +154,15 @@ public class Tele extends Robot {
             SetServoPos(0, G);
             SetServoPos(0.3, D);
             SetServoPos(0.11, LAG, RAG);
-            SetServoPos(0.61, LFA, RFA);
+            SetServoPos(0.58, LFA, RFA);
             ArmPos = 0.5;
             On = true;
             ls = true;
             kp = false;
         }
 
-        if (lb && On) SetServoPos(0.61, LFA, RFA);
-        if (rb && On) SetServoPos(0.7, LFA, RFA);
+        if (lb && On) SetServoPos(0.58, LFA, RFA);
+        if (rb && On) SetServoPos(0.66, LFA, RFA);
 
         if (!(tp)) {
             press = false;
@@ -170,16 +171,17 @@ public class Tele extends Robot {
         if (press) return;
         press = true;
         if (!On) {
+            SetServoPos(0.2, LA, RA);
             SetServoPos(0, G);
             SetServoPos(0.11, LAG, RAG);
-            SetServoPos(0.61, LFA, RFA);
+            SetServoPos(0.58, LFA, RFA);
             SetServoPos(0.2, D);
             On = true;
             ls = true;
             return;
         }
         Sleep();
-        SetServoPos(0.27, G);
+        SetServoPos(0.255, G);
         sleep(150);
         SetServoPos(1, LAG, RAG);
         SetServoPos(0, LFA, RFA);
@@ -277,17 +279,18 @@ public class Tele extends Robot {
         Init();
 
         while (!(LTS.isPressed())) {
-            double power = LTS.isPressed() ? 0 : -0.4;
-            Lift_SetPower(power, power);
+            double power = LTS.isPressed() ? 0 : -0.3;
+            LiftPower(power);
         }
         LiftPower(0);
-//        SetServoPos(0.5, LAG, RAG);
 
         LL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ML.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         LL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ML.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
         if (opModeIsActive()) {
@@ -300,11 +303,14 @@ public class Tele extends Robot {
                 if (!On_Lift) {
                     Movement();
                 }
+                else AG.getController().pwmDisable();
                 Lift();
                 BackArm();
                 AdjustGripper();
                 PlaceElement();
                 drop();
+
+//                telemetry.addData("volt", Volt.getVoltage());
 //                telemetry.addData("XYH", "%6f cm %6f cm", Posx, Posy);
 //                telemetry.addData("LeftLift" , "%d", LL.getCurrentPosition());
 //                telemetry.addData("RightLift", "%d", RL.getCurrentPosition());
