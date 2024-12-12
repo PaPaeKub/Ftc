@@ -23,7 +23,7 @@ public class Tele extends Robot {
     int Level, CurrentPosition = 0;
     double setpoint = 0, AL_Ang = 0, ArmPos = 0, LiftPos = 0;
     boolean kp = false, ls = false, On = false, ag = false, press_ag = false, press = false, r_disable = false, Left_isTouch = false, Right_isTouch = false,  Auto_Lift = false, x_press = false, Auto_Arm = false,
-            a_press = false, On_Lift = false;
+            a_press = false, On_Lift = false, spceimen = false;
     double CurrentTime = System.nanoTime() * 1E-9,  lastRXtime = CurrentTime;
     private void Init() {
         // Initialize Robot
@@ -162,7 +162,7 @@ public class Tele extends Robot {
         }
 
         if (lb && On) SetServoPos(0.58, LFA, RFA);
-        if (rb && On) SetServoPos(0.66, LFA, RFA);
+        if (rb && On) SetServoPos(0.69, LFA, RFA);
 
         if (!(tp)) {
             press = false;
@@ -188,9 +188,9 @@ public class Tele extends Robot {
         sleep(300);
         SetServoPos(0, AG);
         SetServoPos(0, LA, RA);
-        long time = ag ? 325 : 300;
+        long time = spceimen ? 400 : ag ? 325 : 300;
         sleep(time);
-        SetServoPos(0, D);
+        SetServoPos(0.05, D);
         sleep(100);
         SetServoPos(0, G);
         sleep(100);
@@ -270,8 +270,17 @@ public class Tele extends Robot {
         if (lb_press) SetServoPos(0.25, D);
         if (rb_press) SetServoPos(0, D);
 
-        if (du) SetServoPos(1, LLG, RLG);
+        if (du) SetServoPos(0.66, LLG, RLG);
         if (dd) SetServoPos(0, LLG, RLG);
+    }
+
+    private void LiftArm() {
+        boolean dl = gamepad2.dpad_left;
+        boolean dr = gamepad2.dpad_right;
+
+        if (dl) ML.setPower(1);
+        else if (dr) ML.setPower(-1);
+        else ML.setPower(0);
     }
 
     @Override
@@ -309,6 +318,7 @@ public class Tele extends Robot {
                 AdjustGripper();
                 PlaceElement();
                 drop();
+                LiftArm();
 
 //                telemetry.addData("volt", Volt.getVoltage());
 //                telemetry.addData("XYH", "%6f cm %6f cm", Posx, Posy);
@@ -322,4 +332,3 @@ public class Tele extends Robot {
         }
     }
 }
-

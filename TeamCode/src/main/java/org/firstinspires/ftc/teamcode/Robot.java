@@ -115,7 +115,7 @@ public abstract class Robot extends LinearOpMode {
     }
 
     public void move(double power, double tilex, double tiley, double setpoint, double[] basespeed, double[] Kpidf_R,
-                     double[] Kpidf_X, double[] Kpidf_Y, double Brake_Time, double height) {
+                     double[] Kpidf_X, double[] Kpidf_Y, double Brake_Time, double height, double timeout) {
         Controller  pidR    = new Controller(Kpidf_R[0], Kpidf_R[1], Kpidf_R[2], Kpidf_R[3], basespeed[0], toRadian(0.75));
         Controller  DelthaX = new Controller(Kpidf_X[0], Kpidf_X[1], Kpidf_X[2], Kpidf_X[3], basespeed[1], 1);
         Controller  DelthaY = new Controller(Kpidf_Y[0], Kpidf_Y[1], Kpidf_Y[2], Kpidf_Y[3], basespeed[2], 1);
@@ -123,6 +123,7 @@ public abstract class Robot extends LinearOpMode {
         double targety    = tiley * tileSize[1];
         int IS_Complete   = 0;
         this.Current_Time = System.nanoTime() * 1E-9;
+        double count = this.Current_Time;
         this.Last_Time = this.Current_Time;
         while (opModeIsActive()) {
             this.Current_Time = System.nanoTime() * 1E-9;
@@ -140,7 +141,7 @@ public abstract class Robot extends LinearOpMode {
                       (y2 - x2 - r) / d, (y2 + x2 + r) / d);
 
             double curPos = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
-            double Lift_Power = AtTargetRange(curPos, height, 80) ? 0 : curPos > height ? -0.6 : 1;
+            double Lift_Power = AtTargetRange(curPos, height, 80) ? 0 : curPos > height ? -0.8 : 1;
             LiftPower(Lift_Power);
 
 //            telemetry.addData("Move_Factor", Move_Factor);
@@ -157,7 +158,7 @@ public abstract class Robot extends LinearOpMode {
 //            telemetry.addData("Complete", IS_Complete);
             telemetry.update();
 
-            if (Math.abs(Vx) <= 0.01 && Math.abs(Vy) <= 0.01 && Math.abs(r) <= 0.01 && Lift_Power == 0) {
+            if ((Math.abs(Vx) <= 0.01 && Math.abs(Vy) <= 0.01 && Math.abs(r) <= 0.01 && Lift_Power == 0) || this.Current_Time - count > timeout) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;
@@ -171,7 +172,6 @@ public abstract class Robot extends LinearOpMode {
     public void LiftPower(double Lift_Power) {
         LL.setPower(Lift_Power);
         RL.setPower(Lift_Power);
-        ML.setPower(Lift_Power);
     }
 
     public void Lift_SetPower(double spl, double spr) {
@@ -291,7 +291,6 @@ public abstract class Robot extends LinearOpMode {
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
         RL.setDirection(DcMotorSimple.Direction.REVERSE);
-        ML.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // SetBehavior Motors
 
@@ -302,7 +301,7 @@ public abstract class Robot extends LinearOpMode {
 
         LL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ML.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ML.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         // SetPower Motors
 
