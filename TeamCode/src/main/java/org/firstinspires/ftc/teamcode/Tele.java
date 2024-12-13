@@ -162,7 +162,7 @@ public class Tele extends Robot {
         }
 
         if (lb && On) SetServoPos(0.58, LFA, RFA);
-        if (rb && On) SetServoPos(0.69, LFA, RFA);
+        if (rb && On) SetServoPos(0.715, LFA, RFA);
 
         if (!(tp)) {
             press = false;

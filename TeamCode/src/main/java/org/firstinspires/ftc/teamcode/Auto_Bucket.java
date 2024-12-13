@@ -86,7 +86,7 @@ public class Auto_Bucket extends Robot {
 
             drop();
 
-            move(1.0, -0.5, 0.68, 180.0, new double[]{0.05, 0.2, 0.2},
+            move(1.0, -0.55, 0.68, 180.0, new double[]{0.05, 0.2, 0.2},
                     new double[]{1.5, 0.002, 0.15, 0.0}, new double[]{0.09, 0.01, 0.004, 0.0}, new double[]{0.03, 0.0001, 0.003, 0.0}, 0.0001, 20, 2.5);
 
             keep(0);
